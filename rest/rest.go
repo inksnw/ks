@@ -14,6 +14,8 @@ func InitRestApi() {
 	r.Use(middlewares.CorsMiddleware())
 	podRoot := fmt.Sprintf("/api/v1/")
 
+	go BindWebSocketRouter(r)
+
 	rootGroup := r.Group(podRoot)
 	actionFactory(rootGroup)
 	err := r.Run()
