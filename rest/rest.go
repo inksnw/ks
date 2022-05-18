@@ -10,7 +10,7 @@ import (
 func InitRestApi() {
 
 	r := gin.New()
-	r.Use(middlewares.Recv())
+	//r.Use(middlewares.Recv())
 	r.Use(middlewares.CorsMiddleware())
 	podRoot := fmt.Sprintf("/api/v1/")
 
@@ -26,6 +26,7 @@ func InitRestApi() {
 func actionFactory(rootGroup *gin.RouterGroup) {
 	ac := []handlers.Action{
 		handlers.Pod{},
+		handlers.Deploy{},
 	}
 	for _, i := range ac {
 		handlers.GenRouter(rootGroup, i)

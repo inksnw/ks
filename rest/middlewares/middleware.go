@@ -9,6 +9,7 @@ func Recv() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		defer func() {
 			if e := recover(); e != nil {
+
 				c.AbortWithStatusJSON(400, e)
 				return
 			}

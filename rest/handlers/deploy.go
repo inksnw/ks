@@ -9,44 +9,40 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-type Pod struct {
+type Deploy struct {
 	client *kubernetes.Clientset
 }
 
-func (p Pod) SetClient(cli *kubernetes.Clientset) {
-	p.client = cli
-}
-
-func (p Pod) GetResource() string {
-	//TODO implement me
-	return "pods"
-}
-
-func (p Pod) List(c *gin.Context) {
-
-	list, err := k8sutils.Client.CoreV1().Pods("").List(c, metav1.ListOptions{})
+func (d Deploy) List(c *gin.Context) {
+	ns := c.Param("ns")
+	list, err := k8sutils.Client.AppsV1().Deployments(ns).List(c, metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
 	log.Debug().Msgf("总条数 %d", len(list.Items))
-	podList := models.Pod{}
+	podList := models.Deployment{}
 	c.JSON(200, models.Result{
 		Items: podList.List(list),
 		Total: len(list.Items),
 	})
 }
 
-func (p Pod) Detail(c *gin.Context) {
+func (d Deploy) Detail(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p Pod) Apply(c *gin.Context) {
+func (d Deploy) Apply(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p Pod) Delete(c *gin.Context) {
+func (d Deploy) Delete(c *gin.Context) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (d Deploy) GetResource() string {
+	//TODO implement me
+	return "deployments"
 }

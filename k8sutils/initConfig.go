@@ -11,6 +11,12 @@ import (
 	"path/filepath"
 )
 
+var Client *kubernetes.Clientset
+
+func init() {
+	Client = InitClient()
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
