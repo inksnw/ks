@@ -8,11 +8,11 @@ type Pod struct {
 	Name       string   `json:"name"`
 	NameSpace  string   `json:"name_space"`
 	Images     string   `json:"images"`
-	NodeName   string   `json:"nodeName"`
+	NodeName   string   `json:"node_name"`
 	IP         []string `json:"IP"` // 第一个是 POD IP 第二个是 node ip
 	CreateTime string   `json:"create_time"`
-	Phase      string   `json:"phase"`   // pod 当前所处的阶段
-	IsReady    bool     `json:"isReady"` //判断pod 是否就绪
+	Phase      string   `json:"phase"`    // pod 当前所处的阶段
+	IsReady    bool     `json:"is_ready"` //判断pod 是否就绪
 	Message    string   `json:"message"`
 	Key        int      `json:"key"`
 }

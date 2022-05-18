@@ -6,12 +6,12 @@ import (
 
 type Deployment struct {
 	Name       string   `json:"name,omitempty"`
-	NameSpace  string   `json:"nameSpace,omitempty"`
+	NameSpace  string   `json:"name_space,omitempty"`
 	Replicas   [3]int32 `json:"replicas,omitempty"` //3个值，分别是总副本数，可用副本数 ，不可用副本数
 	Images     string   `json:"images,omitempty"`
-	IsComplete bool     `json:"isComplete,omitempty"` //是否完成
-	Message    string   `json:"message,omitempty"`    // 显示错误信息
-	CreateTime string   `json:"createTime,omitempty"`
+	IsComplete bool     `json:"is_complete,omitempty"` //是否完成
+	Message    string   `json:"message,omitempty"`     // 显示错误信息
+	CreateTime string   `json:"create_time,omitempty"`
 	Pods       []*Pod   `json:"pods,omitempty"`
 }
 
