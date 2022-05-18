@@ -2,6 +2,7 @@ package models
 
 import (
 	appsv1 "k8s.io/api/apps/v1"
+	"strconv"
 )
 
 type Deployment struct {
@@ -13,23 +14,36 @@ type Deployment struct {
 	Message    string   `json:"message,omitempty"`     // 显示错误信息
 	CreateTime string   `json:"create_time,omitempty"`
 	Pods       []*Pod   `json:"pods,omitempty"`
+	Key        string   `json:"key,omitempty"`
 }
 
 func (t Deployment) List(list *appsv1.DeploymentList) (rv []Deployment) {
-	n := 0
-	for _, i := range list.Items {
-		n = n + 1
+	for idx, i := range list.Items {
 		rv = append(rv, Deployment{
 			Name:       i.Name,
 			NameSpace:  i.Namespace,
-			Replicas:   [3]int32{},
-			Images:     "",
-			IsComplete: false,
-			Message:    "",
+			Replicas:   [3]int32{i.Status.Replicas, i.Status.AvailableReplicas, i.Status.UnavailableReplicas},
+			Images:     GetImages(i),
+			IsComplete: t.getDeploymentIsComplete(i),
+			Message:    t.getDeploymentCondition(i),
 			CreateTime: "",
 			Pods:       nil,
+			Key:        strconv.Itoa(idx),
 		})
 	}
 	return rv
 
+}
+
+func (t Deployment) getDeploymentIsComplete(dep appsv1.Deployment) bool {
+	return dep.Status.Replicas == dep.Status.AvailableReplicas
+}
+
+func (t Deployment) getDeploymentCondition(dep appsv1.Deployment) string {
+	for _, item := range dep.Status.Conditions {
+		if string(item.Type) == "Available" && string(item.Status) != "True" {
+			return item.Message
+		}
+	}
+	return ""
 }
