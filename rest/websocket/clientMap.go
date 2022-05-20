@@ -20,7 +20,7 @@ type ClientMapStruct struct {
 func (t *ClientMapStruct) Store(conn *websocket.Conn) {
 	wsClient := NewWsClient(conn)
 	t.data.Store(conn.RemoteAddr().String(), wsClient)
-	go wsClient.Ping(time.Second * 1)
+	go wsClient.Ping(time.Second * 30)
 	go wsClient.ReadLoop() //处理读 循环
 	// go wsClient.HandlerLoop() //处理 总控制循环
 }
