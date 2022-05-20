@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ks/rest/handlers"
 	"github.com/ks/rest/middlewares"
+	"github.com/ks/rest/websocket"
 )
 
 func InitRestApi() {
@@ -12,7 +13,7 @@ func InitRestApi() {
 	r := gin.New()
 	//r.Use(middlewares.Recv())
 	r.Use(middlewares.CorsMiddleware())
-	r.GET("/ws", ServeWs)
+	r.GET("/ws", wsCore.ServeWs)
 	podRoot := fmt.Sprintf("/api/v1/")
 
 	rootGroup := r.Group(podRoot)

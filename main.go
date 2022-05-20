@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ks/informer"
 	"github.com/ks/rest"
 	"github.com/phuslu/log"
 	"os"
@@ -23,5 +24,6 @@ func initLog() {
 
 func main() {
 	initLog()
+	informer.InitInformer()
 	rest.InitRestApi()
 }
