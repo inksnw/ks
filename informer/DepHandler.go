@@ -1,21 +1,20 @@
 package informer
 
-import "github.com/phuslu/log"
+import (
+	wsCore "github.com/ks/rest/websocket"
+)
 
 type DepHandler struct {
 }
 
 func (d DepHandler) OnAdd(obj interface{}) {
-	//TODO implement me
-	log.Error().Msgf("implement me")
+	wsCore.ClientMap.SendAll("deployment add")
 }
 
 func (d DepHandler) OnUpdate(oldObj, newObj interface{}) {
-	//TODO implement me
-	log.Error().Msgf("implement me")
+	wsCore.ClientMap.SendAll("deployment update")
 }
 
 func (d DepHandler) OnDelete(obj interface{}) {
-	//TODO implement me
-	log.Error().Msgf("implement me")
+	wsCore.ClientMap.SendAll("deployment delete")
 }
