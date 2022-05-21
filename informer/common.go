@@ -4,17 +4,17 @@ import (
 	wsCore "github.com/ks/rest/websocket"
 )
 
-type DepHandler struct {
+type Common struct {
 }
 
-func (d DepHandler) OnAdd(obj interface{}) {
+func (d Common) OnAdd(obj interface{}) {
 	wsCore.ClientMap.SendAll("deployment add")
 }
 
-func (d DepHandler) OnUpdate(oldObj, newObj interface{}) {
+func (d Common) OnUpdate(oldObj, newObj interface{}) {
 	wsCore.ClientMap.SendAll("deployment update")
 }
 
-func (d DepHandler) OnDelete(obj interface{}) {
+func (d Common) OnDelete(obj interface{}) {
 	wsCore.ClientMap.SendAll("deployment delete")
 }
