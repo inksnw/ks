@@ -13,24 +13,22 @@ type Pod struct {
 	CreateTime string   `json:"create_time"`
 	Phase      string   `json:"phase"`    // pod 当前所处的阶段
 	IsReady    bool     `json:"is_ready"` //判断pod 是否就绪
-	Message    string   `json:"message"`
 	Key        int      `json:"key"`
 }
 
 func (t Pod) List(list *corev1.PodList) (rv []Pod) {
 	n := 0
-	for _, i := range list.Items {
+	for _, pod := range list.Items {
 		n = n + 1
 		rv = append(rv, Pod{
-			Name:       i.Name,
-			NameSpace:  i.Namespace,
-			Images:     "",
-			NodeName:   "",
-			IP:         nil,
-			CreateTime: "",
-			Phase:      "",
-			IsReady:    false,
-			Message:    "",
+			Name:       pod.Name,
+			NameSpace:  pod.Namespace,
+			Images:     GetImagesByPod(pod.Spec.Containers),
+			NodeName:   pod.Spec.NodeName,
+			IP:         []string{pod.Status.PodIP, pod.Status.HostIP},
+			CreateTime: pod.CreationTimestamp.Format("2006-01-02 15:04:05"),
+			Phase:      string(pod.Status.Phase),
+			IsReady:    PosIsReady(&pod),
 			Key:        n,
 		})
 	}

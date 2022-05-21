@@ -13,7 +13,6 @@ type Deployment struct {
 	IsComplete bool     `json:"is_complete,omitempty"` //是否完成
 	Message    string   `json:"message,omitempty"`     // 显示错误信息
 	CreateTime string   `json:"create_time,omitempty"`
-	Pods       []*Pod   `json:"pods,omitempty"`
 	Key        string   `json:"key,omitempty"`
 }
 
@@ -23,11 +22,10 @@ func (t Deployment) List(list *appsv1.DeploymentList) (rv []Deployment) {
 			Name:       i.Name,
 			NameSpace:  i.Namespace,
 			Replicas:   [3]int32{i.Status.Replicas, i.Status.AvailableReplicas, i.Status.UnavailableReplicas},
-			Images:     GetImages(i),
+			Images:     GetImagesByPod(i.Spec.Template.Spec.Containers),
 			IsComplete: t.getDeploymentIsComplete(i),
 			Message:    t.getDeploymentCondition(i),
-			CreateTime: "",
-			Pods:       nil,
+			CreateTime: i.CreationTimestamp.Format("2006-01-02 15:04:05"),
 			Key:        strconv.Itoa(idx),
 		})
 	}
