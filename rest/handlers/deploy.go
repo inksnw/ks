@@ -6,11 +6,9 @@ import (
 	"github.com/ks/rest/models"
 	"github.com/phuslu/log"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 )
 
 type Deploy struct {
-	client *kubernetes.Clientset
 }
 
 func (d Deploy) List(c *gin.Context) {
@@ -43,6 +41,5 @@ func (d Deploy) Delete(c *gin.Context) {
 }
 
 func (d Deploy) GetResource() string {
-	//TODO implement me
 	return "deployments"
 }

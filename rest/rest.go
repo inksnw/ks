@@ -124,6 +124,7 @@ func actionFactory(rootGroup *gin.RouterGroup) {
 	ac := []handlers.Action{
 		handlers.Pod{},
 		handlers.Deploy{},
+		handlers.NameSpace{},
 	}
 	for _, i := range ac {
 		handlers.GenRouter(rootGroup, i)
