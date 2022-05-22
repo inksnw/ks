@@ -15,6 +15,9 @@ func InitInformer() informers.SharedInformerFactory {
 	podInformer := fact.Core().V1().Pods() //监听pod
 	podInformer.Informer().AddEventHandler(Common{})
 
+	ingressInformer := fact.Networking().V1().Ingresses()
+	ingressInformer.Informer().AddEventHandler(Common{})
+
 	fact.Start(wait.NeverStop)
 
 	return fact

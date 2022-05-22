@@ -20,3 +20,15 @@ spec:
   selector:
     matchLabels:
       app: mynginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mynginx
+spec:
+  selector:
+    app: mynginx
+  ports:
+    - port: 8080
+      targetPort: 80
+  type: NodePort
