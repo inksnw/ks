@@ -18,6 +18,7 @@ func GenRouter(r *gin.RouterGroup, action Action) {
 	r.GET(fmt.Sprintf("/namespaces/:ns/%s", action.GetResource()), action.List)
 	r.GET(fmt.Sprintf("/namespaces/:ns/%s/:name", action.GetResource()), action.Detail)
 	r.POST(fmt.Sprintf("/namespaces/:ns/%s", action.GetResource()), action.Apply)
+	r.POST(fmt.Sprintf("/%s", action.GetResource()), action.Apply)
 	r.PUT(fmt.Sprintf("/namespaces/:ns/%s", action.GetResource()), action.Apply)
 	r.DELETE(fmt.Sprintf("/namespaces/:ns/%s/:name", action.GetResource()), action.Delete)
 

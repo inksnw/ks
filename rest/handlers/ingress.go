@@ -31,8 +31,12 @@ func (i Ingress) Detail(c *gin.Context) {
 }
 
 func (i Ingress) Apply(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	postModel := models.IngressPost{}
+	err := c.BindJSON(&postModel)
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(200, postModel)
 }
 
 func (i Ingress) Delete(c *gin.Context) {

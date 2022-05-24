@@ -23,3 +23,18 @@ func (t Ingress) List(list *networkingv1.IngressList) (rv []Ingress) {
 	}
 	return rv
 }
+
+// path 配置
+type IngressPath struct {
+	Path    string `json:"path"`
+	SvcName string `json:"svc_name"`
+	Port    string `json:"port"`
+}
+
+//提交Ingress 对象
+type IngressPost struct {
+	Name      string         `json:"name"`
+	Namespace string         `json:"namespace"`
+	Host      string         `json:"host"`
+	Paths     []*IngressPath `json:"paths"`
+}
