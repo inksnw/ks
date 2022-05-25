@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/ks/k8sutils"
 	"github.com/ks/rest/models"
@@ -26,8 +27,13 @@ func (i Ingress) List(c *gin.Context) {
 }
 
 func (i Ingress) Detail(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	ns := c.Param("ns")
+	name := c.Param("name")
+	ingress, err := k8sutils.Client.NetworkingV1beta1().Ingresses(ns).Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(200, ingress)
 }
 
 func (i Ingress) Apply(c *gin.Context) {
