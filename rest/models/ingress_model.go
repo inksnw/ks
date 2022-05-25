@@ -3,10 +3,9 @@ package models
 import (
 	"context"
 	"github.com/ks/k8sutils"
+	"k8s.io/api/networking/v1"
 	networkingv1 "k8s.io/api/networking/v1"
-	"k8s.io/api/networking/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	"strconv"
 	"strings"
 )
@@ -34,7 +33,7 @@ func (t Ingress) List(list *networkingv1.IngressList) (rv []Ingress) {
 type IngressPath struct {
 	Path    string `json:"path"`
 	SvcName string `json:"svc_name"`
-	Port    int    `json:"port"`
+	Port    string `json:"port"`
 }
 
 //提交Ingress 对象
@@ -66,44 +65,49 @@ func (t IngressPost) parseAnnotations(annos string) map[string]string {
 
 func (t IngressPost) Create() {
 	className := "nginx"
-	var ingressRules []v1beta1.IngressRule
-	var rulePaths []v1beta1.HTTPIngressPath
+	pathType := v1.PathType("Prefix")
+	var ingressRules []v1.IngressRule
+	var rulePaths []v1.HTTPIngressPath
 	for _, pathCfg := range t.Paths {
-		rulePaths = append(rulePaths, v1beta1.HTTPIngressPath{
-			Path: pathCfg.Path,
-			Backend: v1beta1.IngressBackend{
-				ServiceName: pathCfg.SvcName,
-				ServicePort: intstr.FromInt(pathCfg.Port),
+		PortInt, _ := strconv.ParseInt(pathCfg.Port, 10, 32)
+		rule := v1.HTTPIngressPath{
+			Path:     pathCfg.Path,
+			PathType: &pathType,
+			Backend: v1.IngressBackend{
+				Service: &v1.IngressServiceBackend{},
 			},
-		})
+		}
+		rule.Backend.Service.Name = pathCfg.SvcName
+		rule.Backend.Service.Port.Number = int32(PortInt)
+		rulePaths = append(rulePaths, rule)
 	}
-	rule := v1beta1.IngressRule{
+	rule := v1.IngressRule{
 		Host: t.Host,
-		IngressRuleValue: v1beta1.IngressRuleValue{
-			HTTP: &v1beta1.HTTPIngressRuleValue{
+		IngressRuleValue: v1.IngressRuleValue{
+			HTTP: &v1.HTTPIngressRuleValue{
 				Paths: rulePaths,
 			},
 		},
 	}
 	ingressRules = append(ingressRules, rule)
 
-	ingress := &v1beta1.Ingress{
+	ingress := &v1.Ingress{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Ingress",
-			APIVersion: "networking.k8s.io/v1beta1",
+			APIVersion: "networking.k8s.io/v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        t.Name,
 			Namespace:   t.Namespace,
 			Annotations: t.parseAnnotations(t.Annotations),
 		},
-		Spec: v1beta1.IngressSpec{
+		Spec: v1.IngressSpec{
 			IngressClassName: &className,
 			Rules:            ingressRules,
 		},
 	}
 
-	_, err := k8sutils.Client.NetworkingV1beta1().Ingresses(t.Namespace).
+	_, err := k8sutils.Client.NetworkingV1().Ingresses(t.Namespace).
 		Create(context.Background(), ingress, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
