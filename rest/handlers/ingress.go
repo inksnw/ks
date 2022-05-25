@@ -31,11 +31,14 @@ func (i Ingress) Detail(c *gin.Context) {
 }
 
 func (i Ingress) Apply(c *gin.Context) {
+
 	postModel := models.IngressPost{}
 	err := c.BindJSON(&postModel)
 	if err != nil {
 		panic(err)
 	}
+	postModel.Create()
+
 	c.JSON(200, postModel)
 }
 
