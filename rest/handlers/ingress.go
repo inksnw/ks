@@ -49,8 +49,16 @@ func (i Ingress) Apply(c *gin.Context) {
 }
 
 func (i Ingress) Delete(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+
+	ns := c.Param("ns")
+	name := c.Param("name")
+	err := k8sutils.Client.NetworkingV1().Ingresses(ns).Delete(context.Background(), name, metav1.DeleteOptions{})
+	if err != nil {
+		panic(err)
+	}
+	c.JSON(200, models.Result{
+		Msg: "删除成功",
+	})
 }
 
 func (i Ingress) GetResource() string {

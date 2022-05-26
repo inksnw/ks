@@ -12,8 +12,9 @@ import (
 
 type Ingress struct {
 	Name       string `json:"name,omitempty"`
-	NameSpace  string `json:"name_space"`
+	NameSpace  string `json:"namespace"`
 	CreateTime string `json:"create_time"`
+	Host       string `json:"host"`
 	Key        string `json:"key,omitempty"`
 }
 
@@ -22,6 +23,7 @@ func (t Ingress) List(list *networkingv1.IngressList) (rv []Ingress) {
 		rv = append(rv, Ingress{
 			Name:       i.Name,
 			NameSpace:  i.Namespace,
+			Host:       i.Spec.Rules[0].Host,
 			Key:        strconv.Itoa(idx),
 			CreateTime: i.CreationTimestamp.Format("2006-01-02 15:04:05"),
 		})
@@ -45,7 +47,7 @@ type IngressPost struct {
 	Paths       []*IngressPath `json:"paths"`
 }
 
-//解析标签
+//todo 解析标签
 func (t IngressPost) parseAnnotations(annos string) map[string]string {
 	replace := []string{"\t", " ", "\n", "\r\n"}
 	for _, r := range replace {
