@@ -33,8 +33,14 @@ func (s Secret) Detail(c *gin.Context) {
 }
 
 func (s Secret) Apply(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	postModel := models.SecretPost{}
+	err := c.BindJSON(&postModel)
+	if err != nil {
+		panic(err)
+	}
+	postModel.Create()
+
+	c.JSON(200, postModel)
 }
 
 func (s Secret) Delete(c *gin.Context) {
