@@ -14,6 +14,7 @@ func InitRestApi() {
 	//r.Use(middlewares.Recv())
 	r.Use(middlewares.CorsMiddleware())
 	r.GET("/ws", wsCore.ServeWs)
+	r.GET("/webshell", wsCore.PodConnect)
 
 	podRoot := fmt.Sprintf("/api/v1/")
 
