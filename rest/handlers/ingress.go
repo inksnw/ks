@@ -12,6 +12,11 @@ import (
 type Ingress struct {
 }
 
+func (i Ingress) Exec(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (i Ingress) List(c *gin.Context) {
 	ns := c.Query("ns")
 	list, err := k8sutils.Client.NetworkingV1().Ingresses(ns).List(c, metav1.ListOptions{})

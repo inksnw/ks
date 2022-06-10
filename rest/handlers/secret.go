@@ -11,6 +11,11 @@ import (
 type Secret struct {
 }
 
+func (s Secret) Exec(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (s Secret) List(c *gin.Context) {
 	ns := c.Query("ns")
 

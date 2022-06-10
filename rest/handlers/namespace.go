@@ -13,6 +13,11 @@ type NameSpace struct {
 	client *kubernetes.Clientset
 }
 
+func (n NameSpace) Exec(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (n NameSpace) List(c *gin.Context) {
 	list, err := k8sutils.Client.CoreV1().Namespaces().List(c, metav1.ListOptions{})
 	if err != nil {

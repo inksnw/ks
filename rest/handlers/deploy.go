@@ -11,6 +11,11 @@ import (
 type Deploy struct {
 }
 
+func (d Deploy) Exec(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (d Deploy) List(c *gin.Context) {
 	ns := c.Query("ns")
 	list, err := k8sutils.Client.AppsV1().Deployments(ns).List(c, metav1.ListOptions{})
