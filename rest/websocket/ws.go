@@ -1,6 +1,7 @@
 package wsCore
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/ks/k8sutils"
@@ -30,7 +31,7 @@ func ServeWs(c *gin.Context) {
 func PodConnect(c *gin.Context) {
 	wsClient, err := UpGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		return
+		panic(err)
 	}
 	shellClient := NewWsShellClient(wsClient)
 
@@ -42,5 +43,32 @@ func PodConnect(c *gin.Context) {
 			Stderr: shellClient,
 			Tty:    true,
 		})
+	return
+}
+
+func NodeConnect(c *gin.Context) {
+	wsClient, err := UpGrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		panic(err)
+	}
+	shellClient := NewWsShellClient(wsClient)
+	session, err := helpers.SSHConnect(helpers.TempSSHUser, helpers.TempSSHPWD, helpers.TempSSHIP, 22)
+	fmt.Println(err)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+	session.Stdout = shellClient
+	session.Stderr = shellClient
+	session.Stdin = shellClient
+	err = session.RequestPty("xterm-256color", 300, 500, helpers.NodeShellModes)
+	if err != nil {
+		panic(err)
+	}
+
+	err = session.Run("sh")
+	if err != nil {
+		panic(err)
+	}
 	return
 }

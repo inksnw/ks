@@ -10,6 +10,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"net/http"
+	"time"
 )
 
 type Pod struct {
@@ -38,12 +39,18 @@ func (p Pod) List(c *gin.Context) {
 func (p Pod) Detail(c *gin.Context) {
 	ns := c.Param("ns")
 	name := c.Param("name")
-	req := k8sutils.Client.CoreV1().Pods(ns).GetLogs(name, &corev1.PodLogOptions{Follow: true})
-	reader, err := req.Stream(context.Background())
+	cc, _ := context.WithTimeout(c, time.Minute*30) //设置半小时超时时间。否则会造成内存泄露
+	var tailLine int64 = 200
+	req := k8sutils.Client.CoreV1().Pods(ns).GetLogs(name,
+		&corev1.PodLogOptions{Follow: true,
+			TailLines: &tailLine,
+		},
+	)
+	reader, err := req.Stream(cc)
 	if err != nil {
 		panic(err)
 	}
-
+	defer reader.Close()
 	for {
 		buf := make([]byte, 1024)
 		n, err := reader.Read(buf)
@@ -51,7 +58,7 @@ func (p Pod) Detail(c *gin.Context) {
 			break
 		}
 		if n > 0 {
-			c.Writer.Write([]byte(string(buf[0:n])))
+			c.Writer.Write(buf[0:n])
 			c.Writer.(http.Flusher).Flush()
 		}
 	}
