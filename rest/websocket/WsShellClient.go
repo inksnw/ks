@@ -2,6 +2,7 @@ package wsCore
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/phuslu/log"
 )
 
 type WsShellClient struct {
@@ -23,5 +24,6 @@ func (t *WsShellClient) Read(p []byte) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	return copy(p, string(b)+"\n"), nil
+	log.Info().Msgf("接到wsshell信息: %s", string(b))
+	return copy(p, b), nil
 }

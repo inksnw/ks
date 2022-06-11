@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	corev1 "k8s.io/api/core/v1"
+	"strings"
 )
 
 type Result struct {
@@ -14,10 +15,11 @@ type Result struct {
 
 func GetImagesByPod(containers []corev1.Container) string {
 	images := containers[0].Image
+	short := strings.Split(images, "@")[0]
 	if imgLen := len(containers); imgLen > 1 {
-		images += fmt.Sprintf("+其他%d个镜像", imgLen-1)
+		short += fmt.Sprintf("+其他%d个镜像", imgLen-1)
 	}
-	return images
+	return short
 }
 
 func PosIsReady(pod *corev1.Pod) bool {
