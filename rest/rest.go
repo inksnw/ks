@@ -34,6 +34,7 @@ func actionFactory(rootGroup *gin.RouterGroup) {
 		handlers.NameSpace{},
 		handlers.Ingress{},
 		handlers.Secret{},
+		handlers.Node{},
 	}
 	for _, i := range ac {
 		handlers.GenRouter(rootGroup, i)
