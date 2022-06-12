@@ -48,7 +48,10 @@ func (i Ingress) Apply(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	postModel.Create()
+	err = postModel.Create()
+	if err != nil {
+		c.JSON(200, postModel)
+	}
 
 	c.JSON(200, postModel)
 }

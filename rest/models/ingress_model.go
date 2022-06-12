@@ -65,7 +65,7 @@ func (t IngressPost) parseAnnotations(annos string) map[string]string {
 
 }
 
-func (t IngressPost) Create() {
+func (t IngressPost) Create() error {
 	className := "nginx"
 	pathType := v1.PathType("Prefix")
 	var ingressRules []v1.IngressRule
@@ -111,7 +111,5 @@ func (t IngressPost) Create() {
 
 	_, err := k8sutils.Client.NetworkingV1().Ingresses(t.Namespace).
 		Create(context.Background(), ingress, metav1.CreateOptions{})
-	if err != nil {
-		panic(err)
-	}
+	return err
 }
