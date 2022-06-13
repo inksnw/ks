@@ -23,7 +23,7 @@ func (i Ingress) List(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	log.Debug().Msgf("总条数 %d", len(list.Items))
+
 	podList := models.Ingress{}
 	c.JSON(200, models.Result{
 		Items: podList.List(list),
@@ -50,7 +50,8 @@ func (i Ingress) Apply(c *gin.Context) {
 	}
 	err = postModel.Create()
 	if err != nil {
-		c.JSON(200, postModel)
+		log.Error().Msgf(err.Error())
+		c.JSON(200, err.Error())
 	}
 
 	c.JSON(200, postModel)

@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ks/k8sutils"
 	"github.com/ks/rest/models"
-	"github.com/phuslu/log"
 	"io"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,7 +27,6 @@ func (p Pod) List(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	log.Debug().Msgf("总条数 %d", len(list.Items))
 	podList := models.Pod{}
 	c.JSON(200, models.Result{
 		Items: podList.List(list),
