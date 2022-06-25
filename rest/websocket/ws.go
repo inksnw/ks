@@ -2,7 +2,7 @@ package wsCore
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/emicklei/go-restful"
 	"github.com/gorilla/websocket"
 	"github.com/ks/k8sutils"
 	"github.com/ks/rest/helpers"
@@ -19,8 +19,9 @@ var (
 	}
 )
 
-func ServeWs(c *gin.Context) {
-	ws, err := UpGrader.Upgrade(c.Writer, c.Request, nil)
+func ServeWs(req *restful.Request, resp *restful.Response) {
+
+	ws, err := UpGrader.Upgrade(resp.ResponseWriter, req.Request, nil)
 	if err != nil {
 		log.Error().Msgf("ws握手失败 %s", err)
 		return
@@ -28,8 +29,8 @@ func ServeWs(c *gin.Context) {
 	log.Info().Msgf("新建ws连接来自 %s", ws.RemoteAddr())
 	ClientMap.Store(ws)
 }
-func PodConnect(c *gin.Context) {
-	wsClient, err := UpGrader.Upgrade(c.Writer, c.Request, nil)
+func PodConnect(req *restful.Request, resp *restful.Response) {
+	wsClient, err := UpGrader.Upgrade(resp.ResponseWriter, req.Request, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -46,8 +47,8 @@ func PodConnect(c *gin.Context) {
 	return
 }
 
-func NodeConnect(c *gin.Context) {
-	wsClient, err := UpGrader.Upgrade(c.Writer, c.Request, nil)
+func NodeConnect(req *restful.Request, resp *restful.Response) {
+	wsClient, err := UpGrader.Upgrade(resp.ResponseWriter, req.Request, nil)
 	if err != nil {
 		panic(err)
 	}
