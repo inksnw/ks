@@ -1,9 +1,18 @@
-package wsCore
+package websocket
 
 import (
 	"github.com/gorilla/websocket"
 	"time"
 )
+
+type WsMessage struct {
+	MessageType int
+	MessageData []byte //  一般是JSON格式
+}
+
+func NewWsMessage(messageType int, messageData []byte) *WsMessage {
+	return &WsMessage{MessageType: messageType, MessageData: messageData}
+}
 
 type WsClient struct {
 	conn      *websocket.Conn
