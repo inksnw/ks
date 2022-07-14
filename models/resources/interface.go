@@ -19,6 +19,7 @@ package resources
 import (
 	"awesomeProject/api"
 	"awesomeProject/apiserver/query"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sort"
@@ -174,9 +175,35 @@ func labelMatch(labels map[string]string, filter string) bool {
 }
 
 func objectsToInterfaces(objs []runtime.Object) []interface{} {
+
 	res := make([]interface{}, 0)
 	for _, obj := range objs {
+		obj = OmitManagedFields(obj)
 		res = append(res, obj)
 	}
 	return res
+}
+
+//代码来自 k8s.io/cli-runtime/pkg/printers/managedfields.go
+func OmitManagedFields(obj runtime.Object) runtime.Object {
+	if meta.IsListType(obj) {
+		obj = obj.DeepCopyObject()
+		_ = meta.EachListItem(obj, func(item runtime.Object) error {
+			omitManagedFields(item)
+			return nil
+		})
+	} else if _, err := meta.Accessor(obj); err == nil {
+		obj = omitManagedFields(obj.DeepCopyObject())
+	}
+	return obj
+}
+
+func omitManagedFields(o runtime.Object) runtime.Object {
+	a, err := meta.Accessor(o)
+	if err != nil {
+		// The object is not a `metav1.Object`, ignore it.
+		return o
+	}
+	a.SetManagedFields(nil)
+	return o
 }
