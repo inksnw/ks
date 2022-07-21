@@ -27,13 +27,13 @@ func (d CommonEvent) OnAdd(obj interface{}) {
 	if err != nil {
 		//log.Error().Msgf("%s", err)
 	}
-	log.Debug().Msgf("[%s] [%s] [%s] on add", obj1.GetNamespace(), d.Resource, obj1.GetName())
+	//log.Debug().Msgf("[%s] [%s] [%s] on add", obj1.GetNamespace(), d.Resource, obj1.GetName())
 	wsCore.ClientMap.SendAll("deployment add")
 
 }
 
 func (d CommonEvent) OnUpdate(oldObj, newObj interface{}) {
-	log.Debug().Msgf("on update")
+	//log.Debug().Msgf("on update")
 	wsCore.ClientMap.SendAll("deployment update")
 }
 

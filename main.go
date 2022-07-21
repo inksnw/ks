@@ -115,9 +115,20 @@ func (s *APIServer) installKsAPIs() {
 func (s *APIServer) installWS() {
 	websocket.AddToContainer(s.container)
 }
+func cors(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+	chain.ProcessFilter(req, resp)
+
+	allow := req.Request.Header.Get("Origin")
+	resp.Header().Set("Access-Control-Allow-Origin", allow)
+	resp.Header().Set("Access-Control-Allow-Credentials", "true")
+	resp.Header().Set("Access-Control-Allow-Headers", "Content-Type,Access-Token")
+
+}
 
 func (s *APIServer) PrepareRun() {
 	s.container = restful.NewContainer()
+
+	s.container.Filter(cors)
 	s.container.Router(restful.CurlyRouter{})
 	s.installKsAPIs()
 	s.installWS()
@@ -125,7 +136,9 @@ func (s *APIServer) PrepareRun() {
 	for _, ws := range s.container.RegisteredWebServices() {
 		log.Debug().Msgf("%s", ws.RootPath())
 	}
+
 	s.Server.Handler = s.container
+
 	s.Server.Handler = WithKubeAPIServer(s.Server.Handler, k8sutils.K8sRestConfig(), &errorResponder{})
 
 }
@@ -153,6 +166,7 @@ func WithKubeAPIServer(handler http.Handler, config *rest.Config, failed proxy.E
 		allow := req.Header.Get("Origin")
 		w.Header().Set("Access-Control-Allow-Origin", allow)
 
+		log.Debug().Msgf("请求Origin: %s", allow)
 		httpProxy := proxy.NewUpgradeAwareHandler(getLocation(req), defaultTransport, true, false, failed)
 		httpProxy.UpgradeTransport = proxy.NewUpgradeRequestRoundTripper(defaultTransport, defaultTransport)
 		httpProxy.ServeHTTP(w, req)
